@@ -1,10 +1,18 @@
-import { useState } from "react";  // Импорт хука useState из React
+import {useEffect, useRef, useState} from "react";  // Импорт хука useState из React
 
-function MessageForm({ onSubmit }) {
+function MessageForm({onSubmit}) {
     // Определение состояния для текста сообщения
     const [text, setText] = useState('');
     // Определение состояния для автора сообщения
     const [author, setAuthor] = useState('');
+
+    // Создаем реф для текстового поля
+    const textInputRef = useRef(null);
+
+    // Устанавливаем фокус на текстовое поле при монтировании компонента
+    useEffect(() => {
+        textInputRef.current.focus();
+    }, []);
 
     // Функция для обработки отправки формы
     const handleSubmit = (e) => {
@@ -15,6 +23,8 @@ function MessageForm({ onSubmit }) {
             // Очищаем поля ввода после отправки сообщения
             setText('');
             setAuthor('');
+            // Устанавливаем фокус на текстовое поле после отправки сообщения
+            textInputRef.current.focus();
         }
     }
 
@@ -25,6 +35,7 @@ function MessageForm({ onSubmit }) {
                 placeholder="Введите сообщение"
                 value={text}
                 onChange={(e) => setText(e.target.value)}
+                ref={textInputRef} // Привязываем реф к текстовому полю
                 className="input input-bordered w-full"
             />
             <input
