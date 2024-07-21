@@ -3,6 +3,20 @@ import {useEffect, useState} from "react";  // Импорт хуков useEffect
 import MessageForm from "./components/MessageForm";  // Импорт компонента MessageForm
 
 function App() {
+
+    const [theme, setTheme] = useState('cupcake');
+    const themes = ['cupcake', 'bumblebee', 'emerald', 'corporate', 'synthwave', 'retro', 'cyberpunk', 'valentine', 'halloween', 'garden', 'forest', 'aqua', 'lofi', 'pastel', 'fantasy', 'wireframe', 'black', 'luxury', 'dracula', 'cmyk', 'autumn', 'business', 'acid', 'lemonade', 'night', 'coffee', 'winter'];
+
+    useEffect(() => {
+        document.documentElement.setAttribute('data-theme', theme);
+    }, [theme])
+
+    const handleThemeChange = () => {
+        const currentIndex = themes.indexOf(theme);
+        const nextIndex = (currentIndex + 1) % themes.length;
+        setTheme(themes[nextIndex]);
+    }
+
     const [chats] = useState([
         {id: "chat1", name: "chat 1"},
         {id: "chat2", name: "chat 2"},
@@ -61,11 +75,15 @@ function App() {
                 </div>
             </div>
 
-            <div className="w-3/4 p-4">
-                <h1 className="text-2xl font-bold mb-4">Список сообщений</h1>
+            <div className="w-3/4 p-4 flex flex-col h-screen">
+                <div className="flex justify-between items-center mb-4">
+                    <h1 className="text-2xl font-bold">Список сообщений</h1>
+                    <button onClick={handleThemeChange} className="btn btn-primary">
+                        Переключить тему
+                    </button>
+                </div>
                 <MessageForm onSubmit={handleMessageSubmit}/>
-
-                <div className="messageList mt-4">
+                <div className="messageList mt-4 flex-grow overflow-y-auto">
                     {messageList.map((message, index) => (
                         <div key={index} className="message p-4 mb-2 bordered rounded-lg shadow-sm bg-gray-50">
                             <strong className="font-semibold">{message.author}: </strong>
