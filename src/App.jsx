@@ -1,99 +1,46 @@
-import './App.css';  // Импорт файла стилей
-import {useEffect, useState} from "react";  // Импорт хуков useEffect и useState из React
-import MessageForm from "./components/MessageForm";  // Импорт компонента MessageForm
+import './App.css';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Home from './components/Home';
+import Chats from './components/Chats';
+import Profile from './components/Profile';
+import Navigation from './components/Navigation';
+import { useState, useEffect } from 'react';
 
 function App() {
-
     const [theme, setTheme] = useState('cupcake');
-    const themes = ['cupcake', 'bumblebee', 'emerald', 'corporate', 'synthwave', 'retro', 'cyberpunk', 'valentine', 'halloween', 'garden', 'forest', 'aqua', 'lofi', 'pastel', 'fantasy', 'wireframe', 'black', 'luxury', 'dracula', 'cmyk', 'autumn', 'business', 'acid', 'lemonade', 'night', 'coffee', 'winter'];
+
+    const themes = [
+        'cupcake', 'bumblebee', 'emerald', 'corporate', 'synthwave', 'retro', 'cyberpunk',
+        'valentine', 'halloween', 'garden', 'forest', 'aqua', 'lofi', 'pastel', 'fantasy',
+        'wireframe', 'black', 'luxury', 'dracula', 'cmyk', 'autumn', 'business', 'acid',
+        'lemonade', 'night', 'coffee', 'winter'
+    ];
 
     useEffect(() => {
         document.documentElement.setAttribute('data-theme', theme);
-    }, [theme])
+    }, [theme]);
 
     const handleThemeChange = () => {
         const currentIndex = themes.indexOf(theme);
         const nextIndex = (currentIndex + 1) % themes.length;
         setTheme(themes[nextIndex]);
-    }
-
-    const [chats] = useState([
-        {id: "chat1", name: "chat 1"},
-        {id: "chat2", name: "chat 2"},
-        {id: "chat3", name: "chat 3"},
-    ])
-
-    // Определение состояния для списка сообщений
-    const [messageList, setMessageList] = useState([]);
-    // Определение состояния для последнего сообщения
-    const [lastMessage, setLastMessage] = useState(null);
-
-    // useEffect выполняется каждый раз, когда изменяется lastMessage
-    useEffect(() => {
-        // Если последнее сообщение не от робота
-        if (lastMessage && lastMessage.author !== "Robot") {
-            // Устанавливаем таймер на 1 секунду
-            const timer = setTimeout(() => {
-                // Создаем новое сообщение от робота
-                const robotMessage = {
-                    text: "Человек, я получил твое сообщение",
-                    author: "Robot",
-                };
-                // Обновляем список сообщений, добавляя сообщение от робота
-                setMessageList((prevMessageList) => [...prevMessageList, robotMessage]);
-            }, 1000);
-
-            // Очищаем таймер при размонтировании компонента или изменении зависимости
-            return () => clearTimeout(timer);
-        }
-    }, [lastMessage]);  // Зависимость - lastMessage
-
-    // Функция для обработки отправки сообщения
-    const handleMessageSubmit = (text, author) => {
-        // Создаем новое сообщение
-        const newMessage = {
-            text: text,
-            author: author,
-        };
-
-        // Обновляем список сообщений, добавляя новое сообщение
-        setMessageList([...messageList, newMessage]);
-        // Обновляем последнее сообщение
-        setLastMessage(newMessage);
     };
 
     return (
-        <div className="App container mx-auto p-4 flex">
-            <div className="w-1/4">
-                <div className="bg-gray-100 rounded-lg shadow-lg  p-4">
-                    <h2 className="text-xl font-bold mb-4">Чаты</h2>
-                    <ul>
-                        {chats.map((chat) => (
-                            <li key={chat.id} className="p-2 mb-2 rounded-lg bg-white shadow-sm">{chat.name}</li>
-                        ))}
-                    </ul>
+        <Router>
+            <div className="App grid grid-cols-[15rem_1fr] min-h-screen">
+                <Navigation handleThemeChange={handleThemeChange} />
+                <div className="content-container bg-base-100 text-base-content p-4">
+                    <Routes>
+                        <Route path="/" element={<Home />} />
+                        <Route path="/chats" element={<Chats />} />
+                        <Route path="/chats/:chatId" element={<Chats handleMessageSubmit={() => {}} messageList={[]} />} />
+                        <Route path="/profile" element={<Profile />} />
+                    </Routes>
                 </div>
             </div>
-
-            <div className="w-3/4 p-4 flex flex-col h-screen">
-                <div className="flex justify-between items-center mb-4">
-                    <h1 className="text-2xl font-bold">Список сообщений</h1>
-                    <button onClick={handleThemeChange} className="btn btn-primary">
-                        Переключить тему
-                    </button>
-                </div>
-                <MessageForm onSubmit={handleMessageSubmit}/>
-                <div className="messageList mt-4 flex-grow overflow-y-auto">
-                    {messageList.map((message, index) => (
-                        <div key={index} className="message p-4 mb-2 bordered rounded-lg shadow-sm bg-gray-50">
-                            <strong className="font-semibold">{message.author}: </strong>
-                            <span> {message.text}</span>
-                        </div>
-                    ))}
-                </div>
-            </div>
-        </div>
+        </Router>
     );
 }
 
-export default App;  // Экспорт компонента App по умолчанию
+export default App;

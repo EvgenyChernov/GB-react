@@ -36,3 +36,50 @@
     transform: rotate(360deg);
   }
 }
+
+/* Очищаем старые стили */
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Liberation Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+.App {
+  display: grid;
+  grid-template-columns: 15rem 1fr;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.nav-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 15rem; /* Используем rem единицы для фиксированной ширины */
+  padding: 1rem; /* Используем rem единицы для отступов */
+  background-color: var(--tw-bg-base-200); /* Задать фоновый цвет темы */
+  color: var(--tw-text-base-content); /* Задать цвет текста темы */
+  position: sticky;
+  top: 0; /* Закрепляем меню к верхней части экрана */
+}
+
+.content-container {
+  padding: 1rem; /* Используем rem единицы для отступов */
+}
+.chats-container {
+  display: flex;
+  height: 100%; /* Растягиваем контейнер на всю высоту экрана */
+}
+
+/* Стили для контейнера сообщений */
+.messageList {
+  overflow-y: auto; /* Добавляем прокрутку, если содержимого больше высоты контейнера */
+}
+
+/* Убираем фиксированную высоту у блоков */
+.flex {
+  display: flex;
+}
