@@ -1,17 +1,17 @@
+// Chats.js
 import { useEffect, useState } from "react";
-import MessageForm from "./MessageForm";
 import { useNavigate, useParams, Link } from "react-router-dom";
+import { useDispatch, useSelector } from 'react-redux';
+import { addMessage, addChat, deleteChat, robotResponse } from '../features/chat/chatSlice';
+import MessageForm from "./MessageForm";
 
 function Chats({ handleThemeChange }) {
     const { chatId } = useParams();
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const chats = useSelector(state => state.chat.chats);
+    const messages = useSelector(state => state.chat.messages);
     const [selectedChat, setSelectedChat] = useState(null);
-    const [messages, setMessages] = useState({});
-    const [chats, setChats] = useState([
-        { id: '1', name: 'Chat 1' },
-        { id: '2', name: 'Chat 2' },
-        { id: '3', name: 'Chat 3' },
-    ]);
 
     useEffect(() => {
         const chat = chats.find(c => c.id === chatId);
@@ -22,73 +22,23 @@ function Chats({ handleThemeChange }) {
         }
     }, [chatId, chats, navigate]);
 
-    useEffect(() => {
-        // Загружаем сообщения из Local Storage
-        const savedMessages = JSON.parse(localStorage.getItem('messages')) || {};
-        setMessages(savedMessages);
-    }, []);
-
-    useEffect(() => {
-        // Сохраняем сообщения в Local Storage при изменении состояния messages
-        localStorage.setItem('messages', JSON.stringify(messages));
-    }, [messages]);
-
-    useEffect(() => {
-        if (selectedChat) {
-            if (!messages[chatId]) {
-                setMessages(prevMessages => ({ ...prevMessages, [chatId]: [] }));
-            }
-        }
-    }, [selectedChat, chatId, messages]);
-
     const handleMessageSubmit = (text, author) => {
-        const newMessage = {
-            text: text,
-            author: author,
-        };
-
-        // Обновляем состояние сообщений для текущего chatId
-        setMessages(prevMessages => ({
-            ...prevMessages,
-            [chatId]: [...(prevMessages[chatId] || []), newMessage]
-        }));
-
-        // Отправляем сообщение робота через секунду
-        setTimeout(() => {
-            const robotMessage = {
-                text: "Человек, я получил твое сообщение",
-                author: "Robot",
-            };
-            setMessages(prevMessages => ({
-                ...prevMessages,
-                [chatId]: [...(prevMessages[chatId] || []), robotMessage]
-            }));
-        }, 1000);
+        dispatch(addMessage({ chatId, text, author }));
+        dispatch(robotResponse(chatId));
     };
 
-    const addChat = () => {
+    const handleAddChat = () => {
         const newChatId = (chats.length + 1).toString();
         const newChatName = prompt("Введите название нового чата");
         if (newChatName) {
-            setChats(prevChats => [
-                ...prevChats,
-                { id: newChatId, name: newChatName }
-            ]);
-            // Перенаправляем на новый чат
+            dispatch(addChat({ id: newChatId, name: newChatName }));
             navigate(`/chats/${newChatId}`);
         }
     };
 
-    const deleteChat = (id) => {
+    const handleDeleteChat = (id) => {
         if (window.confirm("Вы уверены, что хотите удалить этот чат?")) {
-            setChats(prevChats => prevChats.filter(chat => chat.id !== id));
-            // Удаляем сообщения, связанные с этим чатом
-            setMessages(prevMessages => {
-                const newMessages = { ...prevMessages };
-                delete newMessages[id];
-                return newMessages;
-            });
-            // Если удаляем текущий чат, перенаправляем на первый чат или список чатов
+            dispatch(deleteChat(id));
             if (chatId === id) {
                 navigate('/chats');
             }
@@ -100,7 +50,7 @@ function Chats({ handleThemeChange }) {
             <div className="w-1/4 p-4 bg-gray-100 rounded-lg shadow-lg overflow-y-auto">
                 <h2 className="text-xl font-bold mb-4">Чаты</h2>
                 <button
-                    onClick={addChat}
+                    onClick={handleAddChat}
                     className="btn btn-primary mb-4"
                 >
                     Добавить чат
@@ -113,7 +63,7 @@ function Chats({ handleThemeChange }) {
                                 {chat.name}
                             </Link>
                             <button
-                                onClick={() => deleteChat(chat.id)}
+                                onClick={() => handleDeleteChat(chat.id)}
                                 className="btn btn-danger ml-4"
                             >
                                 Удалить

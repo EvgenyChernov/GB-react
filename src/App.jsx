@@ -1,3 +1,4 @@
+// App.js
 import './App.css';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Home from './components/Home';
@@ -5,6 +6,8 @@ import Chats from './components/Chats';
 import Profile from './components/Profile';
 import Navigation from './components/Navigation';
 import { useState, useEffect } from 'react';
+import { Provider } from 'react-redux';
+import store from './app/store';
 
 function App() {
     const [theme, setTheme] = useState('cupcake');
@@ -27,19 +30,21 @@ function App() {
     };
 
     return (
-        <Router>
-            <div className="App grid grid-cols-[15rem_1fr] min-h-screen">
-                <Navigation handleThemeChange={handleThemeChange} />
-                <div className="content-container bg-base-100 text-base-content p-4">
-                    <Routes>
-                        <Route path="/" element={<Home />} />
-                        <Route path="/chats" element={<Chats />} />
-                        <Route path="/chats/:chatId" element={<Chats handleMessageSubmit={() => {}} messageList={[]} />} />
-                        <Route path="/profile" element={<Profile />} />
-                    </Routes>
+        <Provider store={store}>
+            <Router>
+                <div className="App grid grid-cols-[15rem_1fr] min-h-screen">
+                    <Navigation handleThemeChange={handleThemeChange} />
+                    <div className="content-container bg-base-100 text-base-content p-4">
+                        <Routes>
+                            <Route path="/" element={<Home />} />
+                            <Route path="/chats" element={<Chats />} />
+                            <Route path="/chats/:chatId" element={<Chats />} />
+                            <Route path="/profile" element={<Profile />} />
+                        </Routes>
+                    </div>
                 </div>
-            </div>
-        </Router>
+            </Router>
+        </Provider>
     );
 }
 
