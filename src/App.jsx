@@ -8,6 +8,7 @@ import Navigation from './components/Navigation';
 import { useState, useEffect } from 'react';
 import { Provider } from 'react-redux';
 import store from './app/store';
+import UsersList from "./components/UsersList";
 
 function App() {
     const [theme, setTheme] = useState('cupcake');
@@ -40,6 +41,7 @@ function App() {
                             <Route path="/chats" element={<Chats />} />
                             <Route path="/chats/:chatId" element={<Chats />} />
                             <Route path="/profile" element={<Profile />} />
+                            <Route path="/users" element={<UsersList />} />
                         </Routes>
                     </div>
                 </div>

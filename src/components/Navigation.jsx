@@ -15,6 +15,9 @@ function Navigation({ handleThemeChange }) {
                     <li className="mb-2">
                         <Link to="/profile" className="text-primary">Профиль</Link>
                     </li>
+                    <li className="mb-2">
+                        <Link to="/users" className="text-primary">Пользователи</Link>
+                    </li>
                 </ul>
             </div>
             <button onClick={handleThemeChange} className="btn btn-primary mt-4">
